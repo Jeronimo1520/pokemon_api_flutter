@@ -40,11 +40,10 @@ class _ListPokemonsState extends State<ListPokemons> {
       _loading = false;
     });
 
-    double  currentPosition = _scrollController.position.pixels;
+    double currentPosition = _scrollController.position.pixels;
     double max = _scrollController.position.maxScrollExtent;
-    double offset =currentPosition + 100;
-    if(offset > max) createAnimate(offset);
-    
+    double offset = currentPosition + 100;
+    if (offset > max) createAnimate(offset);
   }
 
   createAnimate(double offset) {
@@ -55,8 +54,16 @@ class _ListPokemonsState extends State<ListPokemons> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
-    return Stack(
-      children: [createListView(), if (_loading) createProgress()],
+    return RefreshIndicator(
+      onRefresh: () async {
+        _pokemons = await _controller.getPokemons(offset: 0);
+        setState(() {
+         _offset = 0;
+        });
+      },
+      child: Stack(
+        children: [createListView(), if (_loading) createProgress()],
+      ),
     );
   }
 
